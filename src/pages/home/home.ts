@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import {ModalController, NavController} from 'ionic-angular';
+import {ModalController, NavController, ToastController} from 'ionic-angular';
 import {QRScanner, QRScannerStatus} from "@ionic-native/qr-scanner";
 
 @Component({
@@ -7,10 +7,11 @@ import {QRScanner, QRScannerStatus} from "@ionic-native/qr-scanner";
   templateUrl: 'home.html'
 })
 export class HomePage {
-
+  private scanSub: any ;
   constructor(public navCtrl: NavController,
               private qrScanner: QRScanner,
-              private modalController: ModalController) {
+              private modalController: ModalController,
+              private toastCtrl: ToastController) {
 
   }
 
@@ -23,10 +24,11 @@ export class HomePage {
           console.log('Camera Permission Given');
 
           // start scanning
-          let scanSub = this.qrScanner.scan().subscribe((text: string) => {
+           this.scanSub = this.qrScanner.scan().subscribe((text: string) => {
             console.log('Scanned something', text);
-            this.qrScanner.hide(); // hide camera preview
-            scanSub.unsubscribe(); // stop scanning
+           // this.qrScanner.hide(); // hide camera preview
+           // scanSub.unsubscribe(); // stop scanning
+            this.presentToast(text);
           });
 
           // show camera preview
@@ -51,5 +53,25 @@ export class HomePage {
   scanOnclick() {
     let modal = this.modalController.create('ScanQrPage');
     modal.present();
+  }
+
+
+  presentToast(text:string) {
+    let toast = this.toastCtrl.create({
+      message: text,
+      duration: 3000,
+      position: 'top'
+    });
+
+    toast.onDidDismiss(() => {
+      console.log('Dismissed toast');
+    });
+
+    toast.present();
+  }
+
+  ionViewWillLeave(){
+    this.qrScanner.hide(); // hide camera preview
+    this.scanSub.unsubscribe(); // stop scanning
   }
 }

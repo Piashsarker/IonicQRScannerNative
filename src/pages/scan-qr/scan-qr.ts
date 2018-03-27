@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
-import {IonicPage, NavController, NavParams, ViewController} from 'ionic-angular';
+import {IonicPage, NavController, NavParams, ToastController, ViewController} from 'ionic-angular';
 import {QRScanner, QRScannerStatus} from "@ionic-native/qr-scanner";
+import {Subscriber} from "rxjs/Subscriber";
 
 /**
  * Generated class for the ScanQrPage page.
@@ -17,16 +18,15 @@ import {QRScanner, QRScannerStatus} from "@ionic-native/qr-scanner";
 export class ScanQrPage {
   private isBackMode: boolean = true;
   private isFlashLightOn: boolean = false;
+  private scanSub: any;
 
   constructor(public navCtrl: NavController,
               public navParams: NavParams,
               public viewController: ViewController,
-              public qrScanner: QRScanner) {
+              public qrScanner: QRScanner,
+              public toastCtrl: ToastController) {
   }
 
-  ionViewDidLoad() {
-    console.log('ionViewDidLoad ScanQrPage');
-  }
 
   ionViewWillEnter(){
     // Optionally request the permission early
@@ -37,10 +37,8 @@ export class ScanQrPage {
           console.log('Camera Permission Given');
 
           // start scanning
-          let scanSub = this.qrScanner.scan().subscribe((text: string) => {
-            console.log('Scanned something', text);
-            this.qrScanner.hide(); // hide camera preview
-            scanSub.unsubscribe(); // stop scanning
+          this.scanSub = this.qrScanner.scan().subscribe((text: string) => {
+            this.presentToast(text);
           });
 
           // show camera preview
@@ -93,5 +91,25 @@ export class ScanQrPage {
     else{
       this.qrScanner.useBackCamera();
     }
+  }
+
+  presentToast(text:string) {
+    let toast = this.toastCtrl.create({
+      message: text,
+      duration: 3000,
+      position: 'top'
+    });
+
+    toast.onDidDismiss(() => {
+      console.log('Dismissed toast');
+    });
+
+    toast.present();
+  }
+
+
+  ionViewWillLeave(){
+    this.qrScanner.hide(); // hide camera preview
+    this.scanSub.unsubscribe(); // stop scanning
   }
 }
