@@ -1,17 +1,31 @@
 import { Component } from '@angular/core';
-import {ModalController, NavController} from 'ionic-angular';
+import {IonicPage, NavController, NavParams, ViewController} from 'ionic-angular';
 import {QRScanner, QRScannerStatus} from "@ionic-native/qr-scanner";
 
+/**
+ * Generated class for the ScanQrPage page.
+ *
+ * See https://ionicframework.com/docs/components/#navigation for more info on
+ * Ionic pages and navigation.
+ */
+
+@IonicPage()
 @Component({
-  selector: 'page-home',
-  templateUrl: 'home.html'
+  selector: 'page-scan-qr',
+  templateUrl: 'scan-qr.html',
 })
-export class HomePage {
+export class ScanQrPage {
+  private isBackMode: boolean = true;
+  private isFlashLightOn: boolean = false;
 
   constructor(public navCtrl: NavController,
-              private qrScanner: QRScanner,
-              private modalController: ModalController) {
+              public navParams: NavParams,
+              public viewController: ViewController,
+              public qrScanner: QRScanner) {
+  }
 
+  ionViewDidLoad() {
+    console.log('ionViewDidLoad ScanQrPage');
   }
 
   ionViewWillEnter(){
@@ -47,9 +61,37 @@ export class HomePage {
       .catch((e: any) => console.log('Error is', e));
   }
 
+  closeModal() {
+    this.viewController.dismiss();
+  }
 
-  scanOnclick() {
-    let modal = this.modalController.create('ScanQrPage');
-    modal.present();
+
+  toggleFlashLight(){
+
+    /** Default isFlashLightOn is false ,
+     * enable it if false **/
+
+    this.isFlashLightOn = !this.isFlashLightOn;
+    if(this.isFlashLightOn){
+      this.qrScanner.enableLight();
+    }
+    else{
+      this.qrScanner.disableLight();
+    }
+
+  }
+  toggleCamera(){
+    /** Toggle Camera , Default is isBackMode is true , toggle
+     * to false to enable front camera and vice versa.
+     *
+     * @type {boolean}
+     */
+    this.isBackMode =  !this.isBackMode;
+    if(this.isBackMode){
+      this.qrScanner.useFrontCamera();
+    }
+    else{
+      this.qrScanner.useBackCamera();
+    }
   }
 }

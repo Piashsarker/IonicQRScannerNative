@@ -3,12 +3,16 @@
     <ion-title>
       Ionic Blank
     </ion-title>
+    <ion-buttons end>
+      <button ion-button (click)="scanOnclick()"> <ion-icon name="camera"> </ion-icon></button>
+    </ion-buttons>
   </ion-navbar>
 </ion-header>
 
-<ion-content padding>
-  The world is your oyster.
-  <p>
-    If you get lost, the <a href="http://ionicframework.com/docs/v2">docs</a> will be your guide.
-  </p>
+<ion-content style="background: none transparent;">
+  <ion-fab right bottom margin>
+    <button ion-fab (click)="scanOnclick()"><ion-icon name="camera">
+
+    </ion-icon></button>
+  </ion-fab>
 </ion-content>
