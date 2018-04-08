@@ -29,6 +29,7 @@ export class ScanQrPage {
 
 
   ionViewWillEnter(){
+    this.showCamera();
     // Optionally request the permission early
     this.qrScanner.prepare()
       .then((status: QRScannerStatus) => {
@@ -111,5 +112,13 @@ export class ScanQrPage {
   ionViewWillLeave(){
     this.qrScanner.hide(); // hide camera preview
     this.scanSub.unsubscribe(); // stop scanning
+    this.hideCamera();
+  }
+  showCamera() {
+    (window.document.querySelector('ion-app') as HTMLElement).classList.add('cameraView');
+  }
+
+  hideCamera() {
+    (window.document.querySelector('ion-app') as HTMLElement).classList.remove('cameraView');
   }
 }
